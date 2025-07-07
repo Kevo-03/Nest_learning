@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Patch, Delete, Query, Param, Body } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Query, Param, Body, Session } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -12,14 +12,38 @@ export class UsersController {
 
     constructor(private service: UsersService, private authService: AuthService) { }
 
+    @Get('colors/:color')
+    setColor(@Param('color') color: string, @Session() session: any) {
+        session.color = color;
+    }
+
+    @Get('/colors')
+    getColor(@Session() session: any) {
+        return session.color;
+    }
+
+    @Get('/who')
+    who(@Session() session: any) {
+        return this.service.findOne(session.userId);
+    }
+
+    @Post('/signout')
+    signOut(@Session() session: any) {
+        session.userId = null;
+    }
+
     @Post('/signup')
-    createUser(@Body() body: CreateUserDto) {
-        return this.authService.signUp(body.email, body.password);
+    async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this.authService.signUp(body.email, body.password);
+        session.userId = user.id;
+        return user;
     }
 
     @Post('/signin')
-    signIn(@Body() body: CreateUserDto) {
-        return this.authService.signIn(body.email, body.password);
+    async signIn(@Body() body: CreateUserDto, @Session() session: any) {
+        const user = await this.authService.signIn(body.email, body.password);
+        session.userId = user.id;
+        return user;
     }
 
     @Get('/:id')
