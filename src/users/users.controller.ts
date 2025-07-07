@@ -1,13 +1,17 @@
-import { Controller, Post, Get, Patch, Delete, Query, Param, Body, Session } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Query, Param, Body, Session, UseInterceptors } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dto/user.dto';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { CurrentUserIterceptor } from './interceptors/current-user.interceptor';
+import { User } from './user.entity';
 
 @Controller('auth')
 @Serialize(UserDto)
+@UseInterceptors(CurrentUserIterceptor)
 export class UsersController {
 
     constructor(private service: UsersService, private authService: AuthService) { }
@@ -22,9 +26,14 @@ export class UsersController {
         return session.color;
     }
 
-    @Get('/who')
+    /* @Get('/who')
     who(@Session() session: any) {
         return this.service.findOne(session.userId);
+    } */
+
+    @Get('/whoami')
+    whoAmI(@CurrentUser() user: User) {
+        return user;
     }
 
     @Post('/signout')
