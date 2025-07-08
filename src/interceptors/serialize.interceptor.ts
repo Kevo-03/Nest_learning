@@ -2,7 +2,7 @@ import { UseInterceptors, NestInterceptor, ExecutionContext, CallHandler } from 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs';
 import { plainToInstance } from 'class-transformer';
-import { UserDto } from 'src/users/dto/user.dto';
+import { UserDto } from '../users/dto/user.dto';
 
 interface ClassConstructor {
     new(...args: any[]): {};
