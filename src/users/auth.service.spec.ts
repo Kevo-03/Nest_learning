@@ -56,11 +56,11 @@ describe('AuthService', () => {
         await expect(service.signIn('asd@asd.mail', 'password')).rejects.toThrow(BadRequestException); */
         await service.signUp('test@test.mail', 'test');
         await expect(service.signIn('test@test.mail', 'password')).rejects.toThrow(BadRequestException);
-    })
+    });
 
     it('returns a user if correct password is provided', async () => {
         await service.signUp('test@test.mail', 'test');
         const user = await service.signIn('test@test.mail', 'test');
         expect(user).toBeDefined();
-    })
+    });
 });
